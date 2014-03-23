@@ -5,6 +5,7 @@ path = require 'path'
 mongoose = require 'mongoose'
 expressValidator = require 'express-validator'
 jsender = require 'jsender'
+uuid = require 'node-uuid'
 middlewares = require './config/middlewares'
 routes = require './config/routes'
 settings = require('./config/setup')()
@@ -14,11 +15,11 @@ app = express()
 # Connect to mongodb database
 mongoose.connect settings.db, (err, res)->
   if err
-    console.log "ERROR: Could not connect to database #{settings.db}"
+    console.log "ERROR: Could not connect to database #{settings.db}."
     console.log err
     return
 
-  console.log "SUCCESS: Connected to database #{settings.db}"
+  console.log "SUCCESS: Connected to database #{settings.db}."
 
 # Setup Middlewares
 app.use responseTime()
@@ -26,7 +27,7 @@ app.use express.logger 'dev'
 app.use express.compress()
 app.use express.bodyParser()
 app.use expressValidator()
-app.use express.cookieParser 'secret'
+app.use express.cookieParser uuid.v4()
 app.use cors()
 app.use jsender()
 app.use middlewares.validate()
@@ -42,4 +43,4 @@ if 'production' isnt app.get 'env'
 routes app
 
 app.listen settings.port, ()->
-  console.log "#{settings.name} listening on port #{settings.port}"
+  console.log "#{settings.name} listening on port #{settings.port}."
